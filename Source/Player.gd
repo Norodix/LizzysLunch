@@ -68,9 +68,9 @@ func _physics_process(delta):
 	accumulatedCollision = Vector3()
 	amountCollision = 0
 	
-	accumulateRayCone(space, 2,  -3, 10, 5, 2, 1)
-	accumulateRayCone(space, 0.2, 3, 10, 5, 2, 1)
-	accumulateRayCone(space, 2, -2, 10, 0.2, 0.2, 5) #shallow forward looking rays
+	accumulateRayCone(space, 2,  -3, 10,   3,   2, 1) 
+	accumulateRayCone(space, 0.2, 3, 10,   3,   2, 1) # two pairs of main cones
+	accumulateRayCone(space, 2,  -2, 10, 0.2, 0.2, 5) #shallow forward looking rays
 
 	#calculate average collision and normal
 	var avgNormal = accumulatedNormal.normalized()

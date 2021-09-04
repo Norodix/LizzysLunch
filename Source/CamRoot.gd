@@ -3,7 +3,7 @@ extends Spatial
 #Code and node setup from 
 #https://github.com/JohnnyRouddro/Godot_Third_Person_Controller/blob/master/Player/Camera.gd
 
-var camrot_h = 0
+var camrot_h = PI
 var camrot_v = 0
 var cam_v_max = 75
 var cam_v_min = -55
