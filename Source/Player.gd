@@ -4,6 +4,11 @@ var speed = 10
 var velocity = Vector3(0, 0, 0)
 var rotationSpeed = PI #radian/sec
 
+var accumulatedNormal = Vector3()
+var amountNormal = 0
+var accumulatedCollision = Vector3()
+var amountCollision = 0
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
@@ -26,6 +31,25 @@ func _process(delta):
 	velocity = velocity.normalized()
 	
 
+func accumulateRayCone(space, rayRadiusTop, rayRadiusBottom, rayNumber, rayLength, rayHeight, weight):
+		#create rays in a circle
+	for n in rayNumber:
+		# ray start and end in local coordinate system
+		var angle = (2.0 * PI / rayNumber) * n
+		var start_local = Vector3(sin(angle) * rayRadiusTop,     rayHeight, cos(angle) * rayRadiusTop)
+		var end_local   = Vector3(sin(angle) * rayRadiusBottom, -rayLength, cos(angle) * rayRadiusBottom)
+		# transform to global coordinates
+		var start_global = global_transform * start_local
+		var end_global = global_transform * end_local
+		#perform raycasting
+		#DrawLine3d.DrawLine(start_global, end_global, Color(1, 1, 0))
+		var rayCast = space.intersect_ray(start_global, end_global, [self])
+		#accumulate the 
+		if !rayCast.empty():
+			accumulatedCollision += rayCast.position * weight
+			amountCollision += weight
+			accumulatedNormal += rayCast.normal * weight
+	pass
 
 
 func _physics_process(delta):
@@ -33,74 +57,23 @@ func _physics_process(delta):
 	
 	#perform raycasting using the space server
 	var space = get_world().direct_space_state
+	accumulatedNormal = Vector3()
+	amountNormal = 0
 	
-	var rayRadiusTop = 2
-	var rayRadiusBottom = -3
-	var rayNumber = 10
-	var rayLength = 5
-	var rayHeight = 2
+	accumulatedCollision = Vector3()
+	amountCollision = 0
 	
-	var accumulatedNormal = Vector3()
-	var amountNormal = 0
-	var avgNormal
-	
-	var accumulatedCollision = Vector3()
-	var amountCollision = 0
-	var avgCollision
-	
-	var realCollision = 0
-	
-	#create rays in a circle
-	for n in rayNumber:
-		# ray start and end in local coordinate system
-		var angle = (2.0 * PI / rayNumber) * n
-		var start_local = Vector3(sin(angle) * rayRadiusTop,     rayHeight, cos(angle) * rayRadiusTop)
-		var end_local   = Vector3(sin(angle) * rayRadiusBottom, -rayLength, cos(angle) * rayRadiusBottom)
-		# transform to global coordinates
-		var start_global = global_transform * start_local
-		var end_global = global_transform * end_local
-		#perform raycasting
-		DrawLine3d.DrawLine(start_global, end_global, Color(1, 1, 0))
-		var rayCast = space.intersect_ray(start_global, end_global, [self])
-		#accumulate the 
-		if !rayCast.empty():
-			accumulatedCollision += rayCast.position
-			amountCollision += 1
-			realCollision += 1
-			accumulatedNormal += rayCast.normal
-			
-	rayRadiusTop = 0.2
-	rayRadiusBottom = 3
-	rayNumber = 10
-	rayLength = 5
-	rayHeight = 2
-	
-	#create rays in a circle
-	for n in rayNumber:
-		# ray start and end in local coordinate system
-		var angle = (2.0 * PI / rayNumber) * n
-		var start_local = Vector3(sin(angle) * rayRadiusTop,     rayHeight, cos(angle) * rayRadiusTop)
-		var end_local   = Vector3(sin(angle) * rayRadiusBottom, -rayLength, cos(angle) * rayRadiusBottom)
-		# transform to global coordinates
-		var start_global = global_transform * start_local
-		var end_global = global_transform * end_local
-		#perform raycasting
-		DrawLine3d.DrawLine(start_global, end_global, Color(1, 1, 0))
-		var rayCast = space.intersect_ray(start_global, end_global, [self])
-		#accumulate the 
-		if !rayCast.empty():
-			accumulatedCollision += rayCast.position
-			amountCollision += 1
-			realCollision += 1
-			accumulatedNormal += rayCast.normal
-		
+	accumulateRayCone(space, 2,  -3, 10, 5, 2, 1)
+	accumulateRayCone(space, 0.2, 3, 10, 5, 2, 1)
+	accumulateRayCone(space, 2, -2, 10, 0.2, 0.2, 5) #shallow forward looking rays
+
 	#calculate average collision and normal
-	avgNormal = accumulatedNormal.normalized()
-	avgCollision = accumulatedCollision / amountCollision
+	var avgNormal = accumulatedNormal.normalized()
+	var avgCollision = accumulatedCollision / amountCollision
 	
 	# perform calculations based on raycasting
 	var origin = self.global_transform.origin
-	if (realCollision > 0):
+	if (amountCollision > 0):
 		#move to the ground based on collisison
 		#print($RayCast.get_collider())
 		var collision_point = avgCollision
@@ -118,7 +91,7 @@ func _physics_process(delta):
 		self.translation = lerp(origin, targetPosition, 0.1)
 		
 		
-		DrawLine3d.DrawLine(targetPosition, targetPosition+avgNormal, Color(0, 0, 1))
+		#DrawLine3d.DrawLine(targetPosition, targetPosition+avgNormal, Color(0, 0, 1))
 		
 		#align self with raycast collision's normal
 		#get normal
