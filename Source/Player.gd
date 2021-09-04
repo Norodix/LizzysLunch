@@ -2,7 +2,10 @@ extends KinematicBody
 
 var speed = 10
 var velocity = Vector3(0, 0, 0)
+var fallVelocity =Vector3()
+var gravity = 98
 var rotationSpeed = PI #radian/sec
+var falling = false
 
 var accumulatedNormal = Vector3()
 var amountNormal = 0
@@ -15,19 +18,20 @@ func _ready():
 
 
 func _process(delta):
-	if Input.is_action_pressed("ui_up"):
-		self.velocity = Vector3(1, 0, 0)
-	elif Input.is_action_pressed("ui_down"):
-		self.velocity = Vector3(-1, 0, 0)
-	else:
-		self.velocity = Vector3(0, 0, 0)
-	
-	var RotationAxis = Vector3(0, 1, 0)
-	if Input.is_action_pressed("ui_right"):
-		self.rotate_object_local(RotationAxis, -rotationSpeed * delta)
-	if Input.is_action_pressed("ui_left"):
-		self.rotate_object_local(RotationAxis, rotationSpeed * delta)
-	
+	if !falling:
+		if Input.is_action_pressed("ui_up"):
+			self.velocity = Vector3(1, 0, 0)
+		elif Input.is_action_pressed("ui_down"):
+			self.velocity = Vector3(-1, 0, 0)
+		else:
+			self.velocity = Vector3(0, 0, 0)
+		
+		var RotationAxis = Vector3(0, 1, 0)
+		if Input.is_action_pressed("ui_right"):
+			self.rotate_object_local(RotationAxis, -rotationSpeed * delta)
+		if Input.is_action_pressed("ui_left"):
+			self.rotate_object_local(RotationAxis, rotationSpeed * delta)
+		
 	velocity = velocity.normalized()
 	
 
@@ -53,6 +57,7 @@ func accumulateRayCone(space, rayRadiusTop, rayRadiusBottom, rayNumber, rayLengt
 
 
 func _physics_process(delta):
+	
 	self.translate_object_local(velocity*speed*delta)
 	
 	#perform raycasting using the space server
@@ -74,6 +79,7 @@ func _physics_process(delta):
 	# perform calculations based on raycasting
 	var origin = self.global_transform.origin
 	if (amountCollision > 0):
+		falling = false #we are grabbing onto sth, do not fall
 		#move to the ground based on collisison
 		#print($RayCast.get_collider())
 		var collision_point = avgCollision
@@ -115,7 +121,16 @@ func _physics_process(delta):
 		var c = a.slerp(b,0.1) # find halfway point between a and b
 		# Apply back
 		transform.basis = Basis(c)
-
-		
+	else:
+		falling = true
+	
+	if falling:
+		#There are no attachment points, the player should fall down
+		fallVelocity += Vector3(0, -1, 0) * gravity * delta
+		if fallVelocity.length() > 600:
+			fallVelocity = fallVelocity.normalized()*600
+		self.transform.origin += fallVelocity * delta
+		pass
+	
 #	DrawLine3d.DrawRay(origin, $RayCast.cast_to, Color(1, 0, 0))
 	pass

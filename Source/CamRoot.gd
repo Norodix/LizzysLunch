@@ -27,7 +27,7 @@ func _input(event):
 		camrot_v += -event.relative.y * v_sensitivity
 
 
-func _physics_process(delta):
+func _process(delta):
 	
 	camrot_v = clamp(camrot_v, cam_v_min, cam_v_max)
 	
