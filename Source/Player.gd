@@ -41,7 +41,11 @@ func _physics_process(delta):
 		var collision_vector = collision_point - origin
 		var distance = collision_vector.length()
 		var refDistance = 1
-		self.translate((collision_vector - (collision_vector / distance * refDistance)) * 1)#0.2)
+		var targetPosition = origin + collision_vector * (distance - refDistance)
+		#self.translate((collision_vector - (collision_vector / distance * refDistance)) * 1)#0.2)
+		# by using interpolation large jumping errors can be mitigated somewhat
+		# it is also much smoother
+		self.translation = lerp(origin, targetPosition, 0.2)
 		
 		#align self with raycast collision's normal
 		#get normal
