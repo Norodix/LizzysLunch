@@ -50,9 +50,9 @@ func accumulateRayCone(space, rayRadiusTop, rayRadiusBottom, rayNumber, rayLengt
 		var rayCast = space.intersect_ray(start_global, end_global, [self])
 		#accumulate the 
 		if !rayCast.empty():
-			# check if raycast is hitting from the front side
-			# dot product of ray vector and normal is negative
-			if (rayCast.normal.dot(end_global-start_global) < 0):
+			# check if raycast is pointing towards player
+			# if not pointing towards player 
+			if (rayCast.normal.dot(rayCast.position - self.global_transform.origin) < 0):
 				accumulatedCollision += rayCast.position * weight
 				amountCollision += weight
 				accumulatedNormal += rayCast.normal * weight
@@ -79,7 +79,7 @@ func _physics_process(delta):
 
 	accumulateRayCone(space, 2,  -3, 10, 1.5, 0, 1) 
 	accumulateRayCone(space, 0.2, 3, 10, 1.5, 0, 1) # two pairs of main cones
-	accumulateRayCone(space, 2,  -2, 10, 0.2,   0.2, 5) #shallow forward looking rays
+	accumulateRayCone(space, 2,  -2, 10, 0.2, 0.2, 5) #shallow forward looking rays
 	accumulateRayCone(space, 2,  -2, 10, -0.2, -0.2, 5) #reverse to turn back in right orientation
 
 	#calculate average collision and normal
