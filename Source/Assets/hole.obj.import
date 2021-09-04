@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/hole.obj-4abb531b5c0b01f5ed0fb360f92e61bf.mesh"
+
+[deps]
+
+files=[ "res://.import/hole.obj-4abb531b5c0b01f5ed0fb360f92e61bf.mesh" ]
+
+source_file="res://Assets/hole.obj"
+dest_files=[ "res://.import/hole.obj-4abb531b5c0b01f5ed0fb360f92e61bf.mesh", "res://.import/hole.obj-4abb531b5c0b01f5ed0fb360f92e61bf.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

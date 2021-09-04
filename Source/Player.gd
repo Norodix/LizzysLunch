@@ -3,7 +3,7 @@ extends KinematicBody
 var speed = 10
 var velocity = Vector3(0, 0, 0)
 var fallVelocity =Vector3()
-var gravity = 98
+var gravity = 9.8
 var rotationSpeed = PI #radian/sec
 var falling = false
 
@@ -46,13 +46,17 @@ func accumulateRayCone(space, rayRadiusTop, rayRadiusBottom, rayNumber, rayLengt
 		var start_global = global_transform * start_local
 		var end_global = global_transform * end_local
 		#perform raycasting
-		#DrawLine3d.DrawLine(start_global, end_global, Color(1, 1, 0))
+		DrawLine3d.DrawLine(start_global, end_global, Color(1, 1, 0))
 		var rayCast = space.intersect_ray(start_global, end_global, [self])
 		#accumulate the 
 		if !rayCast.empty():
-			accumulatedCollision += rayCast.position * weight
-			amountCollision += weight
-			accumulatedNormal += rayCast.normal * weight
+			# check if raycast is hitting from the front side
+			# dot product of ray vector and normal is negative
+			if (rayCast.normal.dot(end_global-start_global) < 0):
+				accumulatedCollision += rayCast.position * weight
+				amountCollision += weight
+				accumulatedNormal += rayCast.normal * weight
+				DrawLine3d.DrawLine(rayCast.position, rayCast.position + rayCast.normal, Color(1, 0, 0))
 	pass
 
 
@@ -68,9 +72,15 @@ func _physics_process(delta):
 	accumulatedCollision = Vector3()
 	amountCollision = 0
 	
-	accumulateRayCone(space, 2,  -3, 10,   3,   2, 1) 
-	accumulateRayCone(space, 0.2, 3, 10,   3,   2, 1) # two pairs of main cones
-	accumulateRayCone(space, 2,  -2, 10, 0.2, 0.2, 5) #shallow forward looking rays
+#	accumulateRayCone(space, 2,  -3, 10,   3,     1, 1) 
+#	accumulateRayCone(space, 0.2, 3, 10,   3,     1, 1) # two pairs of main cones
+#	accumulateRayCone(space, 2,  -2, 10, 0.2,   0.2, 5) #shallow forward looking rays
+#	accumulateRayCone(space, 2,  -2, 10, -0.2, -0.2, 5) #reverse to turn back in right orientation
+
+	accumulateRayCone(space, 2,  -3, 10, 1.5, 0, 1) 
+	accumulateRayCone(space, 0.2, 3, 10, 1.5, 0, 1) # two pairs of main cones
+	accumulateRayCone(space, 2,  -2, 10, 0.2,   0.2, 5) #shallow forward looking rays
+	accumulateRayCone(space, 2,  -2, 10, -0.2, -0.2, 5) #reverse to turn back in right orientation
 
 	#calculate average collision and normal
 	var avgNormal = accumulatedNormal.normalized()
@@ -94,7 +104,7 @@ func _physics_process(delta):
 		#self.translate((collision_vector - (collision_vector / distance * refDistance)) * 1)#0.2)
 		# by using interpolation large jumping errors can be mitigated somewhat
 		# it is also much smoother
-		self.translation = lerp(origin, targetPosition, 0.1)
+		self.translation = lerp(origin, targetPosition, 0.2)
 		
 		
 		#DrawLine3d.DrawLine(targetPosition, targetPosition+avgNormal, Color(0, 0, 1))
@@ -118,7 +128,7 @@ func _physics_process(delta):
 		var newBasis = Basis(newForward, normal, zDir).orthonormalized()
 		var b = Quat(newBasis)
 		# Interpolate using spherical-linear interpolation (SLERP).
-		var c = a.slerp(b,0.1) # find halfway point between a and b
+		var c = a.slerp(b,0.2) # find halfway point between a and b
 		# Apply back
 		transform.basis = Basis(c)
 	else:

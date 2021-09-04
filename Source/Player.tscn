@@ -7,8 +7,7 @@
 
 [sub_resource type="SphereMesh" id=2]
 
-[sub_resource type="BoxShape" id=3]
-extents = Vector3( 2, 0.5, 1 )
+[sub_resource type="SphereShape" id=3]
 
 [node name="PlayerObject" type="KinematicBody"]
 transform = Transform( -1, 0, -8.74228e-08, -1.52855e-14, 1, 1.74846e-07, 8.74228e-08, 1.74846e-07, -1, 6.5452, 3.11932, 0 )
@@ -25,6 +24,7 @@ mesh = SubResource( 2 )
 material/0 = null
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0 )
 shape = SubResource( 3 )
 
 [node name="CamRoot" type="Spatial" parent="."]
