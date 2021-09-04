@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Terrarium_walls.obj-280d1f38956723a1a6463925d3503741.mesh"
+
+[deps]
+
+files=[ "res://.import/Terrarium_walls.obj-280d1f38956723a1a6463925d3503741.mesh" ]
+
+source_file="res://Assets/Terrarium_walls.obj"
+dest_files=[ "res://.import/Terrarium_walls.obj-280d1f38956723a1a6463925d3503741.mesh", "res://.import/Terrarium_walls.obj-280d1f38956723a1a6463925d3503741.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

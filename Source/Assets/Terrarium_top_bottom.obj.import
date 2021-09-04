@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Terrarium_top_bottom.obj-edc8486e3d8e3c1dc4f3e9f1694d0730.mesh"
+
+[deps]
+
+files=[ "res://.import/Terrarium_top_bottom.obj-edc8486e3d8e3c1dc4f3e9f1694d0730.mesh" ]
+
+source_file="res://Assets/Terrarium_top_bottom.obj"
+dest_files=[ "res://.import/Terrarium_top_bottom.obj-edc8486e3d8e3c1dc4f3e9f1694d0730.mesh", "res://.import/Terrarium_top_bottom.obj-edc8486e3d8e3c1dc4f3e9f1694d0730.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true
