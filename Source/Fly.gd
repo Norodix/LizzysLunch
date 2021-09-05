@@ -1,4 +1,4 @@
-extends Spatial
+extends KinematicBody
 
 var DetectionSize = 3
 var minimum = Vector3(-20, 0, -40)
@@ -10,7 +10,7 @@ var counterMode = false
 var layer2Count = 0
 var layer1Count = 0
 
-func randomPlacement(minimum: Vector3, maximum: Vector3):
+func randomPlacement():
 	
 	var placement = Vector3()
 	#do not interrupt flow for too long 
@@ -51,7 +51,7 @@ func randomPlacement(minimum: Vector3, maximum: Vector3):
 			#if no interesting intersection found, do the boring ones as well
 			if !positionFound:
 				#print("No layer2 intersection, going for layer1")
-				var rayDirection = Vector3(randf(), randf(), randf()).normalized()
+				var rayDirection = Vector3(randf()-0.5, randf()-0.5, randf()-0.5).normalized()
 				#this should always return some valid intersection
 				var rayCast = space.intersect_ray(placement, placement+rayDirection*rayLength, [], 0xff) #intersect all layers now
 				if rayCast.empty():
@@ -74,7 +74,7 @@ func randomPlacement(minimum: Vector3, maximum: Vector3):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	randomPlacement(minimum, maximum)
+	randomPlacement()
 	pass # Replace with function body.
 
 func _process(delta):
@@ -83,5 +83,5 @@ func _process(delta):
 		print(layer1Count, "   -   ", layer2Count)
 	
 	if !hasPlacement:
-		randomPlacement(minimum, maximum)
+		randomPlacement()
 	pass
