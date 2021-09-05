@@ -84,7 +84,7 @@ func _process(delta):
 	#print state changes
 	state = newstate
 	if state != prevState:
-		print(states.keys()[prevState], " -> ", states.keys()[state])
+		#print(states.keys()[prevState], " -> ", states.keys()[state])
 		pass
 	prevState = state
 	
