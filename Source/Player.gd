@@ -5,7 +5,11 @@ var velocity = Vector3(0, 0, 0)
 var fallVelocity =Vector3()
 var gravity = 98
 var rotationSpeed = PI #radian/sec
-var falling = false
+
+
+enum states {FALLING, WALKING, BITING, EATING, IDLE}
+var state = states.IDLE
+var prevState = states.IDLE
 
 var accumulatedNormal = Vector3()
 var amountNormal = 0
@@ -18,22 +22,63 @@ func _ready():
 
 
 func _process(delta):
-	if !falling:
+	var newstate = state
+	if state == states.IDLE || state == states.WALKING:
+		newstate = states.IDLE
 		if Input.is_action_pressed("ui_up"):
 			self.velocity = Vector3(1, 0, 0)
+			newstate = states.WALKING
 		elif Input.is_action_pressed("ui_down"):
 			self.velocity = Vector3(-1, 0, 0)
+			newstate = states.WALKING
 		else:
 			self.velocity = Vector3(0, 0, 0)
 		
 		var RotationAxis = Vector3(0, 1, 0)
 		if Input.is_action_pressed("ui_right"):
 			self.rotate_object_local(RotationAxis, -rotationSpeed * delta)
+			newstate = states.WALKING
 		if Input.is_action_pressed("ui_left"):
 			self.rotate_object_local(RotationAxis, rotationSpeed * delta)
-		
+			newstate = states.WALKING
 	velocity = velocity.normalized()
 	
+	if state == states.IDLE || state == states.WALKING:
+		if Input.is_action_just_pressed("ui_eat"):
+			newstate = states.BITING
+			self.velocity = Vector3(0, 0, 0)
+			# play biting animation here
+			$Timer.start()
+			
+	if state == states.BITING:
+		# check biting animation end
+		# if ended
+		if $Timer.is_stopped():
+			# trigger eating contact here
+			var bugs = $BiteDetector.get_overlapping_bodies()
+			if bugs.empty():
+				newstate = states.IDLE
+			else:
+				newstate = states.EATING
+				for bug in bugs:
+					if bug.has_method("randomPlacement"):
+						bug.randomPlacement()
+					else:
+						print("Tried to call function on sth that cannot be eaten")
+				#trigger eating animation
+				$Timer.start()
+			
+	if state == states.EATING:
+		#check animation ended here, to disable eating state
+		if $Timer.is_stopped():
+			newstate = states.IDLE
+	
+	#print state changes
+	state = newstate
+	if state != prevState:
+		#print(states.keys()[prevState], " -> ", states.keys()[state])
+		pass
+	prevState = state
 
 func accumulateRayCone(space, rayRadiusTop, rayRadiusBottom, rayNumber, rayLength, rayHeight, weight):
 		#create rays in a circle
@@ -46,7 +91,7 @@ func accumulateRayCone(space, rayRadiusTop, rayRadiusBottom, rayNumber, rayLengt
 		var start_global = global_transform * start_local
 		var end_global = global_transform * end_local
 		#perform raycasting
-		DrawLine3d.DrawLine(start_global, end_global, Color(1, 1, 0))
+		#DrawLine3d.DrawLine(start_global, end_global, Color(1, 1, 0))
 		var rayCast = space.intersect_ray(start_global, end_global, [self])
 		#accumulate the 
 		if !rayCast.empty():
@@ -57,7 +102,7 @@ func accumulateRayCone(space, rayRadiusTop, rayRadiusBottom, rayNumber, rayLengt
 				accumulatedCollision += rayCast.position * weight
 				amountCollision += weight
 				accumulatedNormal += rayCast.normal * weight
-				DrawLine3d.DrawLine(rayCast.position, rayCast.position + rayCast.normal, Color(1, 0, 0))
+				#DrawLine3d.DrawLine(rayCast.position, rayCast.position + rayCast.normal, Color(1, 0, 0))
 	pass
 
 
@@ -90,7 +135,10 @@ func _physics_process(delta):
 	# perform calculations based on raycasting
 	var origin = self.global_transform.origin
 	if (amountCollision > 0):
-		falling = false #we are grabbing onto sth, do not fall
+		#we are grabbing onto sth, do not fall
+		#if we were falling, now we are not
+		if state == states.FALLING:
+			state = states.IDLE
 		#move to the ground based on collisison
 		#print($RayCast.get_collider())
 		var collision_point = avgCollision
@@ -133,9 +181,9 @@ func _physics_process(delta):
 		# Apply back
 		transform.basis = Basis(c)
 	else:
-		falling = true
+		state = states.FALLING
 	
-	if falling:
+	if state == states.FALLING:
 		#There are no attachment points, the player should fall down
 		fallVelocity += Vector3(0, -1, 0) * gravity * delta
 		if fallVelocity.length() > 600:

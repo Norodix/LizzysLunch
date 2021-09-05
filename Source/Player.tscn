@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://CamRoot.gd" type="Script" id=1]
 [ext_resource path="res://Player.gd" type="Script" id=2]
@@ -8,6 +8,9 @@
 [sub_resource type="SphereMesh" id=2]
 
 [sub_resource type="SphereShape" id=3]
+
+[sub_resource type="CylinderShape" id=4]
+radius = 1.5
 
 [node name="PlayerObject" type="KinematicBody"]
 transform = Transform( -1, 0, -8.74228e-08, -1.52855e-14, 1, 1.74846e-07, 8.74228e-08, 1.74846e-07, -1, 6.5452, 3.11932, 0 )
@@ -37,3 +40,16 @@ script = ExtResource( 1 )
 [node name="ClippedCamera" type="ClippedCamera" parent="CamRoot/H/V"]
 transform = Transform( -4.37114e-08, 0, -1, 0, 1, 2.5411e-20, 1, 0, -4.37114e-08, -7.3608, 0.378025, -1.74846e-07 )
 current = true
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="BiteDetector" type="Area" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -0.0999999, -5.24538e-08 )
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape" type="CollisionShape" parent="BiteDetector"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0 )
+shape = SubResource( 4 )
