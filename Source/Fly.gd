@@ -36,10 +36,11 @@ func randomPlacement():
 			#make the ray only intersect interesting objects at first (layer2)
 			var positionFound = false
 			var rayLength = (maximum - minimum).length()
+			var rayCast
 			
 			for j in layer2TryNumber:
 				var rayDirection = Vector3(randf()-0.5, randf()-0.5, randf()-0.5).normalized()
-				var rayCast = space.intersect_ray(placement, placement+rayDirection*rayLength, [], 0x02) #only intersect layer2
+				rayCast = space.intersect_ray(placement, placement+rayDirection*rayLength, [], 0x02) #only intersect layer2
 				if rayCast.empty():
 					continue
 				placement = rayCast.position - 0.1 * rayDirection
@@ -53,17 +54,27 @@ func randomPlacement():
 				#print("No layer2 intersection, going for layer1")
 				var rayDirection = Vector3(randf()-0.5, randf()-0.5, randf()-0.5).normalized()
 				#this should always return some valid intersection
-				var rayCast = space.intersect_ray(placement, placement+rayDirection*rayLength, [], 0xff) #intersect all layers now
+				rayCast = space.intersect_ray(placement, placement+rayDirection*rayLength, [], 0xff) #intersect all layers now
 				if rayCast.empty():
 					#this should not happen if limits are set well
 					#print("No intersection for ray found at all")
 					hasPlacement = false
 					return
-				placement = rayCast.position - 0.1 * rayCast.normal
+				placement = rayCast.position + 0.3 * rayCast.normal
 				positionFound = true
 				layer1Count += 1
 				
 			self.transform.origin = placement
+			#make the normal the up direction for the fly
+			var Y = rayCast.normal
+			var X = Vector3(Y[2], Y[2], -Y[0]-Y[1])
+			if X.length() < 0.01: #make sure it is not degenerative
+				X = Vector3(-Y[1]-Y[2], Y[0], Y[0])
+
+			self.transform.basis.x = X
+			self.transform.basis.y = Y
+			self.transform.basis.z = X.cross(Y)
+			self.transform.basis.orthonormalized()
 			hasPlacement = true
 			return
 			
