@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://CamRoot.gd" type="Script" id=1]
 [ext_resource path="res://Player.gd" type="Script" id=2]
+[ext_resource path="res://Gecko.tscn" type="PackedScene" id=4]
 
 [sub_resource type="CubeMesh" id=1]
 
@@ -10,19 +11,23 @@
 [sub_resource type="SphereShape" id=3]
 
 [sub_resource type="CylinderShape" id=4]
-radius = 1.5
 
 [node name="PlayerObject" type="KinematicBody"]
 transform = Transform( -1, 0, -8.74228e-08, -1.52855e-14, 1, 1.74846e-07, 8.74228e-08, 1.74846e-07, -1, 6.5452, 3.11932, 0 )
 script = ExtResource( 2 )
 
+[node name="Gecko" parent="." instance=ExtResource( 4 )]
+transform = Transform( -8.14603e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -8.14603e-08, 0, -1, 0 )
+
 [node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( 1.5, 1.12938e-21, 0, -3.38813e-21, 0.5, 0, 0, 0, 1, -0.5, 0, 0 )
+visible = false
 mesh = SubResource( 1 )
 material/0 = null
 
 [node name="MeshInstance2" type="MeshInstance" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.30482, 0.203702, 1.49687e-07 )
+visible = false
 mesh = SubResource( 2 )
 material/0 = null
 
@@ -42,14 +47,13 @@ transform = Transform( -4.37114e-08, 0, -1, 0, 1, 2.5411e-20, 1, 0, -4.37114e-08
 current = true
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 0.5
+wait_time = 2.0
 one_shot = true
 
 [node name="BiteDetector" type="Area" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -0.0999999, -5.24538e-08 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 2.647, -0.5, 0 )
 collision_layer = 0
 collision_mask = 4
 
 [node name="CollisionShape" type="CollisionShape" parent="BiteDetector"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0 )
 shape = SubResource( 4 )

@@ -48,12 +48,15 @@ func _process(delta):
 			newstate = states.BITING
 			self.velocity = Vector3(0, 0, 0)
 			# play biting animation here
+			$Gecko/AnimationPlayer.playback_speed=3
+			$Gecko/AnimationPlayer.play("Gecko_Bite")
 			$Timer.start()
 			
 	if state == states.BITING:
 		# check biting animation end
+		var playing = $Gecko/AnimationPlayer.is_playing()
 		# if ended
-		if $Timer.is_stopped():
+		if !playing:
 			# trigger eating contact here
 			var bugs = $BiteDetector.get_overlapping_bodies()
 			if bugs.empty():
@@ -66,19 +69,30 @@ func _process(delta):
 					else:
 						print("Tried to call function on sth that cannot be eaten")
 				#trigger eating animation
+				$Gecko/AnimationPlayer.playback_speed=1
+				$Gecko/AnimationPlayer.play("Gecko_Eating")
 				$Timer.start()
 			
 	if state == states.EATING:
 		#check animation ended here, to disable eating state
-		if $Timer.is_stopped():
+		var playing = $Gecko/AnimationPlayer.is_playing()
+		if !playing:
 			newstate = states.IDLE
 	
 	#print state changes
 	state = newstate
 	if state != prevState:
-		#print(states.keys()[prevState], " -> ", states.keys()[state])
+		print(states.keys()[prevState], " -> ", states.keys()[state])
 		pass
 	prevState = state
+	
+	#set animation according to state
+	if state == states.IDLE:
+		$Gecko/AnimationPlayer.play("Gecko_Idle")
+		$Gecko/AnimationPlayer.playback_speed=2
+	if state == states.WALKING:
+		$Gecko/AnimationPlayer.play("Gecko_Walk")
+		$Gecko/AnimationPlayer.playback_speed=4
 
 func accumulateRayCone(space, rayRadiusTop, rayRadiusBottom, rayNumber, rayLength, rayHeight, weight):
 		#create rays in a circle
