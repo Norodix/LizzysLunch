@@ -8,6 +8,7 @@ extends Spatial
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	randomize()
 	$PlayerObject/CamRoot/H/V/ClippedCamera.add_exception($Walls)
 	pass # Replace with function body.
 

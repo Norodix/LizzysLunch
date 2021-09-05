@@ -52,6 +52,7 @@ func accumulateRayCone(space, rayRadiusTop, rayRadiusBottom, rayNumber, rayLengt
 		if !rayCast.empty():
 			# check if raycast is pointing towards player
 			# if not pointing towards player 
+			# this helps if trimeshes are used because they have no real normals
 			if (rayCast.normal.dot(rayCast.position - self.global_transform.origin) < 0):
 				accumulatedCollision += rayCast.position * weight
 				amountCollision += weight
