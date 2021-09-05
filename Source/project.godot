@@ -16,12 +16,14 @@ _global_script_class_icons={
 [application]
 
 config/name="Stop Waiting For Godot"
-run/main_scene="res://World.tscn"
-config/icon="res://icon.png"
+run/main_scene="res://Title.tscn"
+config/icon="res://Images/Gecko_Icon.png"
+config/windows_native_icon="res://Images/icon.ico"
 
 [autoload]
 
 DrawLine3d="*res://Godot-3D-Lines/DrawLine3D.gd"
+Background_music="*res://Background_music.tscn"
 
 [editor_plugins]
 
