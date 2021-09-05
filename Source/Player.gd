@@ -50,7 +50,8 @@ func _process(delta):
 			# play biting animation here
 			$Gecko/AnimationPlayer.playback_speed=3
 			$Gecko/AnimationPlayer.play("Gecko_Bite")
-			$Timer.start()
+			$Bite.play()
+			
 			
 	if state == states.BITING:
 		# check biting animation end
@@ -71,7 +72,8 @@ func _process(delta):
 				#trigger eating animation
 				$Gecko/AnimationPlayer.playback_speed=1
 				$Gecko/AnimationPlayer.play("Gecko_Eating")
-				$Timer.start()
+				$Chew.play()
+
 			
 	if state == states.EATING:
 		#check animation ended here, to disable eating state
@@ -96,9 +98,7 @@ func _process(delta):
 	if state == states.FALLING:
 		$Gecko/AnimationPlayer.playback_speed=1
 		$Gecko/AnimationPlayer.play("Gecko_Falling")
-	if state == states.WALKING:
-		$Gecko/AnimationPlayer.playback_speed=4
-		$Gecko/AnimationPlayer.play("Gecko_Walk")
+
 
 func accumulateRayCone(space, rayRadiusTop, rayRadiusBottom, rayNumber, rayLength, rayHeight, weight):
 		#create rays in a circle

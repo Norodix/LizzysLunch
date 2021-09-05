@@ -1,8 +1,10 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://CamRoot.gd" type="Script" id=1]
 [ext_resource path="res://Player.gd" type="Script" id=2]
+[ext_resource path="res://Audio/Bite.wav" type="AudioStream" id=3]
 [ext_resource path="res://Gecko.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Audio/chewing.wav" type="AudioStream" id=5]
 
 [sub_resource type="CubeMesh" id=1]
 
@@ -57,3 +59,11 @@ collision_mask = 4
 
 [node name="CollisionShape" type="CollisionShape" parent="BiteDetector"]
 shape = SubResource( 4 )
+
+[node name="Bite" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+volume_db = 10.0
+
+[node name="Chew" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 5 )
+volume_db = 10.0
