@@ -3,7 +3,7 @@ extends KinematicBody
 var speed = 10
 var velocity = Vector3(0, 0, 0)
 var fallVelocity =Vector3()
-var gravity = 9.8
+var gravity = 98
 var rotationSpeed = PI #radian/sec
 var falling = false
 
