@@ -1,6 +1,6 @@
 extends Spatial
 
-var DetectionSize = 5
+var DetectionSize = 3
 var minimum = Vector3(-20, 0, -40)
 var maximum = Vector3(20, 30, 40)
 var hasPlacement = false
