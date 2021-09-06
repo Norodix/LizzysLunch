@@ -1,8 +1,8 @@
 
 # Godot-specific ignores
 .import/
-export.cfg
-export_presets.cfg
+#export.cfg
+#export_presets.cfg
 
 # Imported translations (automatically generated from CSV files)
 *.translation
@@ -13,3 +13,6 @@ data_*/
 
 #Blender bakcup files
 *.blend?
+
+#Export folder
+Export/
